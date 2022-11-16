@@ -46,6 +46,11 @@ def register(data: LoginUserBody):
         raise BaseException(f"{e}")
 
 
-@router.get('/token')
-def test_token():
-    return {"name": "huxiaodong"}
+
+
+@router.get('/logout', name='退出登录', description='退出登录', response_model=ResponseDto)
+def logout():
+    try:
+        return ResponseDto(msg='退出成功')
+    except Exception as e:
+        raise BaseException(str(e))

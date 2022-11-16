@@ -12,8 +12,10 @@ from config import Text
 from app.routers.user.user import router
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
+from starlette.middleware.cors import CORSMiddleware
 huhuhu = FastAPI(title=Text.TITLE, description=Text.DESC, version=Text.VERSION)
+
+
 
 
 # 全局校验token
@@ -28,7 +30,7 @@ async def all_process_handler(request: Request, call_next):
         token = request.headers['token']
         TokenUtil.parse_user_token(token)
     except:
-        return JSONResponse(f"{HTTP_CODE_MSG.get(401)}")
+        return JSONResponse({"code":401,"msg":f"{HTTP_CODE_MSG.get(401)}"})
     return response
 
 
@@ -49,3 +51,13 @@ async def http_exception_handler(request, exc):
 async def validation_exception_handler(request, exc):
     response = ResponseDto(code=400, msg=HTTP_CODE_MSG.get(400), data=str(exc))
     return JSONResponse(response.dict())
+
+
+# 解决跨域问题,得放到最下面
+huhuhu.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
